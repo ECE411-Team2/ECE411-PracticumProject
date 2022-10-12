@@ -1,6 +1,6 @@
 # ECE-411-Team-2
 
-Our timeline will be split into practium checkpoints, each with their own focus:
+Our project planning will be split into practium checkpoints, each with their own focus:
   1. Teams Formed 
   2. Projects Decided 
   3. Project requirements (Product Design Specification - PDS)
