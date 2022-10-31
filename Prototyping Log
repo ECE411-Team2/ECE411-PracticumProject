@@ -1,1 +1,10 @@
-
+10/28/22: Inital code/ skeleton writen. 
+  -Button matrix
+  -Variables for math
+  -LCD GPIO ports
+  -Reading button matrix, identifying button push
+  -Write saved number values 
+  
+10/30/22: Began laying out button matrix
+  -Only had 14 buttons, ordered more to finish 
+  -Will be 5x5 layout
