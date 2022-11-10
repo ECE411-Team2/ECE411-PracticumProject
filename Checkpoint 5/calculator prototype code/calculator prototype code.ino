@@ -16,14 +16,15 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 
-int row1 = ;
-int row2 = ;
+int row1 =1 ;
+int row2 = 2;
 
-int col1 = ;
-int col2 = ;
+int col1 = 4;
+int col2 = 5;
 
 
-LiquidCrystal_I2C lcd(FIND THE LCD DISPLAY ADDRESS,20,4);  // set the LCD address to blank for a 20 chars and 4 line display (need to determine for our LCD)
+int LCD_address = 0x27;
+LiquidCrystal_I2C lcd(LCD_address,20,4);  // set the LCD address to blank for a 20 chars and 4 line display (need to determine for our LCD)
 
 
 char charOutput;
@@ -34,11 +35,11 @@ char value1[14];
 char result[16];
 int numType = 0;
 
-int LCD_address = 0x27;
+int haveInput = 0;
 
 int screen_on = 0;
 
-int val# = 0;
+int val = 0;
 int numCount;
 
 //trash variable to hold things use with strtoul https://www.tutorialspoint.com/c_standard_library/c_function_strtoul.htm
@@ -72,7 +73,8 @@ void loop() {
 
 
   haveInput = 0;
-  wait(50);
+  //wait(50);
+  delay(5000);
 /*  if(val# == 1)
   {
     lcd.setCursor(2,1);
@@ -91,6 +93,7 @@ void loop() {
 
       if(digitalRead(row1) == 1)
       {
+        
         Wire.beginTransmission(LCD_address);
         if(screen_on = 0)
         {
