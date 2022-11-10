@@ -79,7 +79,7 @@ void loop() {
   pinMode(col5, INPUT);
 
   haveInput = 0;
-  wait(50);
+  delay(50);
   if(val# == 1)
   {
     lcd.setCursor(2,1);
