@@ -73,10 +73,14 @@ void loop() {
 
 
   haveInput = 0;
-  wait(1000);
+  delay(1000);
+  Wire.beginTransmission(LCD_address);
   Wire.write(0b0000001000);
-  wait(1000);
-  Wire.write(0b0000001100)
+  Wire.endTransmission();
+  delay(1000);
+  Wire.beginTransmission(LCD_address);
+  Wire.write(0b0000001100);
+  Wire.endTransmission();
 /*  if(val# == 1)
   {
     lcd.setCursor(2,1);
