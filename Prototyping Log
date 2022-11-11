@@ -12,3 +12,7 @@
 
 11/8/22
   -Modified code down to 2x2 matrix for prototyping
+
+11/10/2022
+  -Attempted to get I2C to work on pico with Arduino IDE
+  -Decided to switch to C
