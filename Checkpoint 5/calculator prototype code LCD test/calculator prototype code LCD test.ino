@@ -12,18 +12,17 @@
       */
 
 
-
+//#include <pico/stdlib.h>
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
-
-int row1 = ;
-int row2 = ;
-
-int col1 = ;
-int col2 = ;
+#include <gpio.h>
+#include <i2c_api.h>
+#include <i2c.h>
 
 
-LiquidCrystal_I2C lcd(FIND THE LCD DISPLAY ADDRESS,20,4);  // set the LCD address to blank for a 20 chars and 4 line display (need to determine for our LCD)
+
+
+LiquidCrystal_I2C lcd(0x27,16,2);  // set the LCD address to blank for a 20 chars and 4 line display (need to determine for our LCD)
 
 
 char charOutput;
@@ -33,26 +32,47 @@ char value0[14];
 char value1[14];
 char result[16];
 int numType = 0;
+int haveInput = 0;
 
 int LCD_address = 0x27;
 
+
+
 int screen_on = 0;
 
-int val# = 0;
+int val = 0;
 int numCount;
+int readval = 0;
 
 //trash variable to hold things use with strtoul https://www.tutorialspoint.com/c_standard_library/c_function_strtoul.htm
 char *garbage;
-
+i2c_inst_t *i2c = i2c0;
 void setup() {
   Serial.begin(9600);
+   _i2c_init(i2c,400*1000);
   // put your setup code here, to run once:
-
-
+  //gpio_set_function(16,GPIO_FUNC_I2C);
+ // gpio_set_function(17,GPIO_FUNC_I2C);
+ // Wire.setSDA(16);
+  //Wire.setSCL(17);
+  MbedI2C(16,17);
   Wire.begin();
   Wire.beginTransmission(LCD_address);
   Wire.write(0b0000001000);
-  Wire.write(0b0000000111)
+  Wire.endTransmission();
+  while(1)
+  {
+    readval = Wire.read();
+    readval = readval & 0b0110000000;
+    if(readval == 0b0100000000)
+    {
+      break;
+    }
+    Serial.print(readval);
+  }
+  Wire.beginTransmission(LCD_address);
+
+  Wire.write(0b0000000111);
   Wire.endTransmission();
 
 
@@ -64,18 +84,16 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   
-  //LCD gpio ports
-  pinMode(row1, OUTPUT);
-  pinMode(row2, OUTPUT);
-
-  pinMode(col1, INPUT);
-  pinMode(col2, INPUT);
+  
 
 
   haveInput = 0;
   delay(1000);
+  lcd.blink();
+  delay(2000);
   Wire.beginTransmission(LCD_address);
   Wire.write(0b0000001000);
+  Serial.println("here");
   Wire.endTransmission();
   delay(1000);
   Wire.beginTransmission(LCD_address);
@@ -197,7 +215,7 @@ void loop() {
 
 
 }
-
+/*
 void switchIO() {
   pinMode(row1, INPUT);
   pinMode(row2, INPUT);
@@ -207,5 +225,6 @@ void switchIO() {
 
   return;
 }
+*/
 
 

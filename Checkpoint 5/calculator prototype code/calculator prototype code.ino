@@ -16,7 +16,7 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 
-int row1 =1 ;
+int row1 = 1 ;
 int row2 = 2;
 
 int col1 = 4;
