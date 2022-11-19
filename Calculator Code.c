@@ -147,7 +147,7 @@ int main() {
     lcd_init();
 	for(int i = 0x0; i < 0x10; i++)
 	{
-		sleep_us(50);
+		sleep_us(500);
 		lcd_send_byte(i,LCD_COMMAND);
 	}
 
