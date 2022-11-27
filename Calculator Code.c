@@ -69,6 +69,13 @@ static int addr = 0x27;
 #define MAX_LINES      2
 #define MAX_CHARS      16
 
+//Changing I2C default pins to GP14 and GP15
+#define PICO_DEFAULT_I2C 1
+#define PICO_DEFAULT_I2C_SDA_PIN 14
+#define PICO_DEFAULT_I2C_SCL_PIN 15
+#define i2c_default i2c1
+
+
 /* Quick helper function for single byte transfers */
 void i2c_write_byte(uint8_t val) {
 
