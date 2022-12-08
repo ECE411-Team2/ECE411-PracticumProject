@@ -62,6 +62,41 @@ const int LCD_ENABLE_BIT = 0x04;
 // By default these LCD display drivers are on bus address 0x27
 static int addr = 0x27;
 
+
+//integers for button array
+int row1 = 0;
+int row2 = 0;
+int row3 = 0;
+int row4 = 0;
+int row5 = 0;
+
+int col1 = 0;
+int col2 = 0;
+int col3 = 0;
+int col4 = 0;
+int col5 = 0;
+
+int have_input;
+int currentvalue0 = 0;
+int currentvalue1 = 0;
+int resultvalue = 0;
+
+
+char operation = '0';
+int valuenumber = 0;
+char value0[14];
+char value1[14];
+char result[16];
+// 0 for decimal, 1 for binary, 2 for hex
+int numType = 0;
+
+int num_inputs = 0;
+
+
+
+
+
+
 // Modes for lcd_send_byte
 #define LCD_CHARACTER  1
 #define LCD_COMMAND    0
@@ -137,9 +172,85 @@ void lcd_init() {
     lcd_clear();
 }
 
+void switchIO()
+{
+	gpio_put(row1, false);
+	gpio_put(row2, false);
+	gpio_put(row3, false);
+	gpio_put(row4, false);
+	gpio_put(row5, false);
+	
+	gpio_set_dir(row1, false);
+	gpio_set_dir(row2, false);
+	gpio_set_dir(row3, false);
+	gpio_set_dir(row4, false);
+	gpio_set_dir(row5, false);
+	
+	
+	gpio_set_dir(col1, true);
+	gpio_set_dir(col2, true);
+	gpio_set_dir(col3, true);
+	gpio_set_dir(col4, true);
+	gpio_set_dir(col5, true);
+	
+	gpio_put(col1, true);
+	gpio_put(col2, true);
+	gpio_put(col3, true);
+	gpio_put(col4, true);
+	gpio_put(col5, true);
+	
+	return;
+}
+
+
+void writevalue(char input)
+{
+	if(valuenumber == 0)
+	{
+		value0[num_inputs] = input;
+		num_inputs++;
+	}
+	else if(valuenumber == 1)
+	{
+		value1[num_inputs] = input;
+		num_inputs++;
+	}
+	
+	return;
+}
+		
+
+
+
+
 int main() {
 
     // This example will use I2C0 on the default SDA and SCL pins (4, 5 on a Pico)
+	gpio_put(row1, true);
+	gpio_put(row2, true);
+	gpio_put(row3, true);
+	gpio_put(row4, true);
+	gpio_put(row5, true);
+	
+	gpio_set_dir(row1, true);
+	gpio_set_dir(row2, true);
+	gpio_set_dir(row3, true);
+	gpio_set_dir(row4, true);
+	gpio_set_dir(row5, true);
+	
+	gpio_set_dir(col1, false);
+	gpio_set_dir(col2, false);
+	gpio_set_dir(col3, false);
+	gpio_set_dir(col4, false);
+	gpio_set_dir(col5, false);
+	
+	
+	gpio_put(col1, false);
+	gpio_put(col2, false);
+	gpio_put(col3, false);
+	gpio_put(col4, false);
+	gpio_put(col5, false);
+
     i2c_init(i2c_default, 100 * 1000);
 	
     gpio_set_function(PICO_DEFAULT_I2C_SDA_PIN, GPIO_FUNC_I2C);
@@ -157,6 +268,276 @@ int main() {
 		sleep_us(500);
 		lcd_send_byte(i,LCD_COMMAND);
 	}
+	
+  while(haveInput == 0)
+  {
+    if(gpio_get(col1) != 0)
+    {
+      //change ROWS and COLUMNS 
+      switchIO();
+      //Serial.print(digitalRead(col1));
+      delay(50);
+      if(gpio_get(row1) != 0)
+      {
+       //Serial.print("row 1");
+        /*Wire.beginTransmission(LCD_address);
+        if(screen_on = 0)
+        {
+          Wire.write(0b1000001100);
+        }
+        if(screen_on = 1)
+        {
+          Wire.write(0b1000001000);
+        }
+        Wire.endTransmission();*/
+      }
+      else if(gpio_get(row2) != 0)
+      {
+        //Serial.print("row 2");
+        writevalue(/*fill this with something */);
+//        Wire.beginTransmission(LCD_address);
+//        Wire.write(0b1000110001);
+//        Wire.endTransmission();
+      }
+	    
+	else if(gpio_get(row3) != 0)
+      {
+        //Serial.print("row 2");
+        writevalue(/*fill this with something */);
+//        Wire.beginTransmission(LCD_address);
+//        Wire.write(0b1000110001);
+//        Wire.endTransmission();
+      }
+	else if(gpio_get(row4) != 0)
+      {
+        //Serial.print("row 2");
+        writevalue(/*fill this with something */);
+//        Wire.beginTransmission(LCD_address);
+//        Wire.write(0b1000110001);
+//        Wire.endTransmission();
+      }
+	else if(gpio_get(row5) != 0)
+      {
+        //Serial.print("row 2");
+        writevalue(/*fill this with something */);
+//        Wire.beginTransmission(LCD_address);
+//        Wire.write(0b1000110001);
+//        Wire.endTransmission();
+      }
+      haveInput = 1;
+      break;
+    }
+    if(gpio_get(col2) != 0)
+    {
+      //change ROWS and COLUMNS 
+      switchIO();
+      //Serial.print("Column 2\n");
+      delay(50);
+      if(gpio_get(row1) != 0)
+      {
+        //Serial.print("row 1");
+        writevalue(/*fill this with something */);
+//        Wire.beginTransmission(LCD_address);
+//        Wire.write(0b1000110010);
+//        Wire.endTransmission();
+      }
+      else if(gpio_get(row2) != 0)
+      {
+        //Serial.print("row 2");
+        writevalue(/*fill this with something */);
+//        Wire.beginTransmission(LCD_address);
+//        Wire.write(0b1000110011);
+//        Wire.endTransmission();
+      }
+	else if(gpio_get(row3) != 0)
+      {
+        //Serial.print("row 2");
+        writevalue(/*fill this with something */);
+//        Wire.beginTransmission(LCD_address);
+//        Wire.write(0b1000110001);
+//        Wire.endTransmission();
+      }
+	else if(gpio_get(row4) != 0)
+      {
+        //Serial.print("row 2");
+        writevalue(/*fill this with something */);
+//        Wire.beginTransmission(LCD_address);
+//        Wire.write(0b1000110001);
+//        Wire.endTransmission();
+      }
+	else if(gpio_get(row5) != 0)
+      {
+        //Serial.print("row 2");
+        writevalue(/*fill this with something */);
+//        Wire.beginTransmission(LCD_address);
+//        Wire.write(0b1000110001);
+//        Wire.endTransmission();
+      }
+
+      haveInput = 1;
+      break;
+    }
+	  
+	  
+    if(gpio_get(col3) != 0)
+    {
+      //change ROWS and COLUMNS 
+      switchIO();
+      //Serial.print("Column 2\n");
+      delay(50);
+      if(gpio_get(row1) != 0)
+      {
+        //Serial.print("row 1");
+        writevalue(/*fill this with something */);
+//        Wire.beginTransmission(LCD_address);
+//        Wire.write(0b1000110010);
+//        Wire.endTransmission();
+      }
+      else if(gpio_get(row2) != 0)
+      {
+        //Serial.print("row 2");
+        writevalue(/*fill this with something */);
+//        Wire.beginTransmission(LCD_address);
+//        Wire.write(0b1000110011);
+//        Wire.endTransmission();
+      }
+	else if(gpio_get(row3) != 0)
+      {
+        //Serial.print("row 2");
+        writevalue(/*fill this with something */);
+//        Wire.beginTransmission(LCD_address);
+//        Wire.write(0b1000110001);
+//        Wire.endTransmission();
+      }
+	else if(gpio_get(row4) != 0)
+      {
+        //Serial.print("row 2");
+        writevalue(/*fill this with something */);
+//        Wire.beginTransmission(LCD_address);
+//        Wire.write(0b1000110001);
+//        Wire.endTransmission();
+      }
+	else if(gpio_get(row5) != 0)
+      {
+        //Serial.print("row 2");
+        writevalue(/*fill this with something */);
+//        Wire.beginTransmission(LCD_address);
+//        Wire.write(0b1000110001);
+//        Wire.endTransmission();
+      }
+
+      haveInput = 1;
+      break;
+    }
+	  
+	  
+    if(gpio_get(col4) != 0)
+    {
+      //change ROWS and COLUMNS 
+      switchIO();
+      //Serial.print("Column 2\n");
+      delay(50);
+      if(gpio_get(row1) != 0)
+      {
+        //Serial.print("row 1");
+        writevalue(/*fill this with something */);
+//        Wire.beginTransmission(LCD_address);
+//        Wire.write(0b1000110010);
+//        Wire.endTransmission();
+      }
+      else if(gpio_get(row2) != 0)
+      {
+        //Serial.print("row 2");
+        writevalue(/*fill this with something */);
+//        Wire.beginTransmission(LCD_address);
+//        Wire.write(0b1000110011);
+//        Wire.endTransmission();
+      }
+	else if(gpio_get(row3) != 0)
+      {
+        //Serial.print("row 2");
+        writevalue(/*fill this with something */);
+//        Wire.beginTransmission(LCD_address);
+//        Wire.write(0b1000110001);
+//        Wire.endTransmission();
+      }
+	else if(gpio_get(row4) != 0)
+      {
+        //Serial.print("row 2");
+        writevalue(/*fill this with something */);
+//        Wire.beginTransmission(LCD_address);
+//        Wire.write(0b1000110001);
+//        Wire.endTransmission();
+      }
+	else if(gpio_get(row5) != 0)
+      {
+        //Serial.print("row 2");
+        writevalue(/*fill this with something */);
+//        Wire.beginTransmission(LCD_address);
+//        Wire.write(0b1000110001);
+//        Wire.endTransmission();
+      }
+
+      haveInput = 1;
+      break;
+    }
+	  
+	  
+	  
+	  
+    if(gpio_get(col5) != 0)
+    {
+      //change ROWS and COLUMNS 
+      switchIO();
+      //Serial.print("Column 2\n");
+      delay(50);
+      if(gpio_get(row1) != 0)
+      {
+        //Serial.print("row 1");
+        writevalue(/*fill this with something */);
+//        Wire.beginTransmission(LCD_address);
+//        Wire.write(0b1000110010);
+//        Wire.endTransmission();
+      }
+      else if(gpio_get(row2) != 0)
+      {
+        //Serial.print("row 2");
+        writevalue(/*fill this with something */);
+//        Wire.beginTransmission(LCD_address);
+//        Wire.write(0b1000110011);
+//        Wire.endTransmission();
+      }
+	else if(gpio_get(row3) != 0)
+      {
+        //Serial.print("row 2");
+        writevalue(/*fill this with something */);
+//        Wire.beginTransmission(LCD_address);
+//        Wire.write(0b1000110001);
+//        Wire.endTransmission();
+      }
+	else if(gpio_get(row4) != 0)
+      {
+        //Serial.print("row 2");
+        writevalue(/*fill this with something */);
+//        Wire.beginTransmission(LCD_address);
+//        Wire.write(0b1000110001);
+//        Wire.endTransmission();
+      }
+	else if(gpio_get(row5) != 0)
+      {
+        //Serial.print("row 2");
+        writevalue(/*fill this with something */);
+//        Wire.beginTransmission(LCD_address);
+//        Wire.write(0b1000110001);
+//        Wire.endTransmission();
+      }
+
+      haveInput = 1;
+      break;
+    }
+    delay(10);
+
+  }
 
     return 0;
 
