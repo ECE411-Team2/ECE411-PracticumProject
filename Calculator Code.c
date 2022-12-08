@@ -254,7 +254,9 @@ void writetoLCD()
 		result = itoa(resultvalue);
 		for(int a = 0; a < numinputs; a++)
 		{
-			lcd_send_byte(result[a], /* input command or whatever */);
+
+			lcd_send_byte(result[a], /* input command to row 1 */);
+
 		}
 	}
 	
@@ -422,6 +424,7 @@ void writevalue(char input)
 		
 		
 	}
+	writetoLCD();
 	
 	return;
 }
