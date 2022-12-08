@@ -11,9 +11,11 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #include "pico/stdlib.h"
 #include "hardware/i2c.h"
 #include "pico/binary_info.h"
+#include "pico/gpio.h"		//https://raspberrypi.github.io/pico-sdk-doxygen/gpio_8h.html
 
 /* Example code to drive a 16x2 LCD panel via a I2C bridge chip (e.g. PCF8574)
    NOTE: The panel must be capable of being driven at 3.3v NOT 5v. The Pico
@@ -76,7 +78,7 @@ int col3 = 0;
 int col4 = 0;
 int col5 = 0;
 
-int have_input;
+int haveinput;
 int currentvalue0 = 0;
 int currentvalue1 = 0;
 int resultvalue = 0;
@@ -88,9 +90,11 @@ char value0[14];
 char value1[14];
 char result[16];
 // 0 for decimal, 1 for binary, 2 for hex
-int numType = 0;
+int numtype = 0;
 
-int num_inputs = 0;
+int numinputs = 0;
+
+int temp; //this is for hex to ascii
 
 
 
@@ -202,18 +206,182 @@ void switchIO()
 	return;
 }
 
+void domath()
+{
+	if(operation == '+')
+	{
+		resultvalue = currentvalue0 + currentvalue1;
+		numinputs = 0;
+		currentvalue0 = 0;
+		currentvalue1 = 0;
+	}
+	
+	else if(operation == '-')
+	{
+		resultvalue = currentvalue0 - currentvalue1;
+		numinputs = 0;
+		currentvalue0 = 0;
+		currentvalue1 = 0;
+	}
+	
+	else if(operation == 'X')
+	{
+		resultvalue = currentvalue0 * currentvalue1;
+		numinputs = 0;
+		currentvalue0 = 0;
+		currentvalue1 = 0;
+	}
+	
+	else if(operation == '/')
+	{
+		resultvalue = currentvalue0 / currentvalue1;
+		numinputs = 0;
+		currentvalue0 = 0;
+		currentvalue1 = 0;	
+	}
+	
+	return;
+}
+
+void writetoLCD()
+{
+	if(numtype == 0)
+	{
+		result = itoa(resultvalue);
+		for(int a = 0; a < numinput; a++)
+		{
+			lcd_send_byte(result[a], /* input command or whatever */);
+		}
+	}
+	
+	else if(numtype == 1)
+	{
+		result = itoa(resultvalue);
+		for(int a = 0; a < numinput; a++)
+		{
+			lcd_send_byte(result[a], /* input command or whatever */);
+		}
+	}	
+	
+	else if(numtype == 2)
+	{
+		for(int b = 0; b < numinput; b++)
+		{
+			
+		for(int a = 0; a < numinput; a++)
+		{
+			lcd_send_byte(result[a], /* input command or whatever */);
+		}
+	}
+		
+	
+
 
 void writevalue(char input)
 {
 	if(valuenumber == 0)
 	{
-		value0[num_inputs] = input;
-		num_inputs++;
+		// if decimal mode and a decimal number
+		if(numtype == 0 && input >= 47 && input <= 57)
+		{
+			currentvalue0 += atoi(*input) * (10 ^ numinputs);
+			value0[numinputs] = input;
+			numinputs++;
+		}
+		
+		// if binary and binary number
+		else if(numtype == 1 && input != '0' && input != '1')
+		{
+			currentvalue0 += atoi(*input) * (2 ^ numinputs);
+			value0[numinputs] = input;
+			num_inputs++;
+		}
+		
+		// if hex and hex number
+		else if(numtype == 0 && ((input >= 47 && input <= 57) || (input >= 65 && input <= 70 )
+		{
+			if(input == 'A')
+			{
+				currentvalue0 = 10 * (16 ^ numinputs);
+			}
+			else if(input == 'B')
+			{
+				currentvalue0 = 11 * (16 ^ numinputs);
+			}
+			else if(input == 'C')
+			{
+				currentvalue0 = 12 * (16 ^ numinputs);
+			}
+			else if(input == 'D')
+			{
+				currentvalue0 = 13 * (16 ^ numinputs);
+			}
+			else if(input == 'E')
+			{
+				currentvalue0 = 14 * (16 ^ numinputs);
+			}
+			else if(input == 'F')
+			{
+				currentvalue0 = 15 * (16 ^ numinputs);
+			}
+			value0[numinputs] = input;
+			numinputs++;
+			
+		}
+		
+
 	}
 	else if(valuenumber == 1)
 	{
-		value1[num_inputs] = input;
-		num_inputs++;
+		// if decimal mode and a decimal number
+		if(numtype == 0 && input >= 47 && input <= 57)
+		{
+			currentvalue1 += atoi(*input) * (10 ^ numinputs);
+			value1[numinputs] = input;
+			numinputs++;
+		}
+		
+		// if binary and binary number
+		else if(numtype == 1 && input != '0' && input != '1')
+		{
+			currentvalue1 += atoi(*input) * (2 ^ numinputs);
+			value1[numinputs] = input;
+			numinputs++;
+		}
+		
+		// if hex and hex number
+		else if(numtype == 0 && ((input >= 47 && input <= 57) || (input >= 65 && input <= 70 )
+		{
+			if(input == 'A')
+			{
+				currentvalue1 = 10 * (16 ^ numinputs);
+			}
+			else if(input == 'B')
+			{
+				currentvalue1 = 11 * (16 ^ numinputs);
+			}
+			else if(input == 'C')
+			{
+				currentvalue1 = 12 * (16 ^ numinputs);
+			}
+			else if(input == 'D')
+			{
+				currentvalue1 = 13 * (16 ^ numinputs);
+			}
+			else if(input == 'E')
+			{
+				currentvalue1 = 14 * (16 ^ numinputs);
+			}
+			else if(input == 'F')
+			{
+				currentvalue1 = 15 * (16 ^ numinputs);
+			}
+			value1[numinputs] = input;
+			numinputs++;
+			
+		}
+		
+		
 	}
 	
 	return;
@@ -268,8 +436,10 @@ int main() {
 		sleep_us(500);
 		lcd_send_byte(i,LCD_COMMAND);
 	}
+
+	haveinput = 0;
 	
-  while(haveInput == 0)
+  while(haveinput == 0)
   {
     if(gpio_get(col1) != 0)
     {
@@ -324,7 +494,7 @@ int main() {
 //        Wire.write(0b1000110001);
 //        Wire.endTransmission();
       }
-      haveInput = 1;
+      haveinput = 1;
       break;
     }
     if(gpio_get(col2) != 0)
@@ -374,7 +544,7 @@ int main() {
 //        Wire.endTransmission();
       }
 
-      haveInput = 1;
+      haveinput = 1;
       break;
     }
 	  
@@ -426,7 +596,7 @@ int main() {
 //        Wire.endTransmission();
       }
 
-      haveInput = 1;
+      haveinput = 1;
       break;
     }
 	  
@@ -478,7 +648,7 @@ int main() {
 //        Wire.endTransmission();
       }
 
-      haveInput = 1;
+      haveinput = 1;
       break;
     }
 	  
@@ -532,7 +702,7 @@ int main() {
 //        Wire.endTransmission();
       }
 
-      haveInput = 1;
+      haveinput = 1;
       break;
     }
     delay(10);
