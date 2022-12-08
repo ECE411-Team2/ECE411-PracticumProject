@@ -676,6 +676,9 @@ int main() {
 				//Serial.print("row 1");
 				//writevalue(/*fill this with something */);
 				      lcd_clear();
+				      valuenumber = 0;
+				      currentvalue0 = 0;
+				      currentvalue1 = 0;
 			//        Wire.beginTransmission(LCD_address);
 			//        Wire.write(0b1000110010);
 			//        Wire.endTransmission();
@@ -685,6 +688,7 @@ int main() {
 				//Serial.print("row 2");
 				//writevalue(/*fill this with something */);
 				      operation = '+';
+				      valuenumber = 1;
 			//        Wire.beginTransmission(LCD_address);
 			//        Wire.write(0b1000110011);
 			//        Wire.endTransmission();
@@ -694,6 +698,7 @@ int main() {
 				//Serial.print("row 2");
 				//writevalue(/*fill this with something */);
 					operation = '*';
+					valuenumber = 1;
 			//        Wire.beginTransmission(LCD_address);
 			//        Wire.write(0b1000110001);
 			//        Wire.endTransmission();
@@ -752,6 +757,7 @@ int main() {
 				//Serial.print("row 2");
 				//writevalue(/*fill this with something */);
 				      operation = '-';
+				      valuenumber = 1;
 			//        Wire.beginTransmission(LCD_address);
 			//        Wire.write(0b1000110011);
 			//        Wire.endTransmission();
@@ -761,6 +767,7 @@ int main() {
 				//Serial.print("row 2");
 				//writevalue(/*fill this with something */);
 					operation = '/';
+					valuenumber = 1;
 			//        Wire.beginTransmission(LCD_address);
 			//        Wire.write(0b1000110001);
 			//        Wire.endTransmission();
@@ -777,6 +784,9 @@ int main() {
 			      {
 				//Serial.print("row 2");
 				domath();
+				valuenumber = 0;
+					currentvalue0 = 0;
+					currentvalue1 = 0;
 			//        Wire.beginTransmission(LCD_address);
 			//        Wire.write(0b1000110001);
 			//        Wire.endTransmission();
