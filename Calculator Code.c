@@ -15,7 +15,7 @@
 #include "pico/stdlib.h"
 #include "hardware/i2c.h"
 #include "pico/binary_info.h"
-#include "pico/gpio.h"		//https://raspberrypi.github.io/pico-sdk-doxygen/gpio_8h.html
+#include "hardware/gpio.h"		//https://raspberrypi.github.io/pico-sdk-doxygen/gpio_8h.html
 
 /* Example code to drive a 16x2 LCD panel via a I2C bridge chip (e.g. PCF8574)
    NOTE: The panel must be capable of being driven at 3.3v NOT 5v. The Pico
@@ -497,7 +497,7 @@ int main() {
 	{
 		while(gpio_get(col1) == 1 || gpio_get(col2) == 1 || gpio_get(col3) == 1 || gpio_get(col4) == 1 || gpio_get(col5) == 1)
 		{
-			delay(5);
+			sleep_ms(5);
 		}
 		
   		while(haveinput == 0)
@@ -507,7 +507,7 @@ int main() {
 	      //change ROWS and COLUMNS 
 				switchIO();
 			      //Serial.print(digitalRead(col1));
-			      delay(50);
+			      sleep_ms(50);
 			      if(gpio_get(row1) != 0)
 			      {
 			       //Serial.print("row 1");
@@ -566,7 +566,7 @@ int main() {
 			      //change ROWS and COLUMNS 
 			      switchIO();
 			      //Serial.print("Column 2\n");
-			      delay(50);
+			      sleep_ms(50);
 			      if(gpio_get(row1) != 0)
 			      {
 				//Serial.print("row 1");
@@ -618,7 +618,7 @@ int main() {
 			      //change ROWS and COLUMNS 
 			      switchIO();
 			      //Serial.print("Column 2\n");
-			      delay(50);
+			      sleep_ms(50);
 			      if(gpio_get(row1) != 0)
 			      {
 				//Serial.print("row 1");
@@ -670,7 +670,7 @@ int main() {
 			      //change ROWS and COLUMNS 
 			      switchIO();
 			      //Serial.print("Column 2\n");
-			      delay(50);
+			      sleep_ms(50);
 			      if(gpio_get(row1) != 0)
 			      {
 				//Serial.print("row 1");
@@ -732,7 +732,7 @@ int main() {
 			      //change ROWS and COLUMNS 
 			      switchIO();
 			      //Serial.print("Column 2\n");
-			      delay(50);
+			      sleep_ms(50);
 			      if(gpio_get(row1) != 0)
 			      {
 				//Serial.print("row 1");
@@ -795,7 +795,7 @@ int main() {
 			      haveinput = 1;
 			      break;
 			}
-			    delay(10);
+			    sleep_ms(10);
 
 		}
 	}
