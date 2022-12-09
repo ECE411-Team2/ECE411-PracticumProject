@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #include "pico/stdlib.h"
 #include "hardware/i2c.h"
 #include "pico/binary_info.h"
@@ -92,12 +93,16 @@ int currentvalue0 = 0;
 int currentvalue1 = 0;
 int resultvalue = 0;
 
+char msg[10] ;
+    
+
 
 char operation = '0';
 int valuenumber = 0;
 char value0[14];
 char value1[14];
 char result[16];
+char result1[16];
 // 0 for decimal, 1 for binary, 2 for hex
 int numtype = 0;
 
@@ -216,6 +221,7 @@ void switchIO()
 
 void domath()
 {
+    resultvalue = 0;
 	if(operation == '+')
 	{
 		resultvalue = currentvalue0 + currentvalue1;
@@ -249,32 +255,43 @@ void domath()
 	}
 	
 	valuenumber = 0;
+    writetoLCDresult();
 	
 	return;
 }
 
-void writetoLCD()
+void writetoLCDresult()
 {
+    lcd_clear();
+    //result = NULL;
 	if(numtype == 0)
 	{
 		itoa(resultvalue, result, 10);
-		for(int a = 0; a < numinputs; a++)
-		{
+		/*for(int a = 0; a < numinputs; a++)
+		{*/
 
-			lcd_send_byte(result[a], LCD_ENTRYSHIFTINCREMENT);
+			lcd_string(result);
 			sleep_ms(5);
 
-		}
+		//}
 	}
 	
 	else if(numtype == 1)
 	{
 		itoa(resultvalue, result, 2);
-		for(int a = 0; a < numinputs; a++)
-		{
-			lcd_send_byte(result[a], LCD_ENTRYSHIFTINCREMENT);
+		/*for(int a = 0; a < numinputs; a++)
+		{*/
+        if((int)(ceil(log10(resultvalue)/log10(2)) )> 15)
+                {
+                    result[(int)ceil(log10(resultvalue)/log10(2))] = '\0';
+                }
+                else
+                {
+                    result[15] = '\0';
+                }
+			lcd_string(result);
 			sleep_ms(5);
-		}
+		//}
 	}	
 	
 	else if(numtype == 2)
@@ -313,125 +330,327 @@ void writetoLCD()
 			}
 		}
 			
-		for(int a = 0; a < numinputs; a++)
-		{
+		/*for(int a = 0; a < numinputs; a++)
+		{*/
+        if(((int)ceil(log10(resultvalue)/log10(16))) > 15)
+                {
+                    result[(int)ceil(log10(resultvalue)/log10(16))] = '\0';
+                }
+                else
+                {
+                    result[15] = '\0';
+                }
 			sleep_ms(5);
-			lcd_send_byte(result[a], LCD_ENTRYSHIFTINCREMENT);
-		}
+			lcd_string(result);
+		//}
 	}
 	
-	numinputs = 0;
+	
+}
+
+void writetoLCD()
+{
+    lcd_clear();
+    if(valuenumber == 0)
+    {
+        if(numtype == 0)
+        {
+            itoa(currentvalue0, result, 10);
+            /*for(int a = 0; a < numinputs; a++)
+            {*/result[numinputs] = '\0';
+
+                
+                lcd_string(value0);
+                sleep_ms(5);
+
+            //}
+        }
+        
+        else if(numtype == 1)
+        {
+            itoa(currentvalue0, result, 2);
+            /*for(int a = 0; a < numinputs; a++)
+            {*/                
+            if(((int)ceil(log10(currentvalue0)/log10(2))) > 13)
+                {
+                    result[(int)ceil(log10(currentvalue0)/log10(2))] = '\0';
+                }
+                else
+                {
+                    result[13] = '\0';
+                }
+                lcd_string(result);
+                sleep_ms(5);
+            //}
+        }	
+        
+        else if(numtype == 2)
+        {
+            for(int b = numinputs; b < 0; b++)
+            {
+                temp = currentvalue0 / (16 ^ b);
+                if(temp == 10)
+                {
+                    result[b] = 'A';
+                }
+                
+                else if(temp == 11)
+                {
+                    result[b] = 'B';
+                }
+                
+                else if(temp == 12)
+                {
+                    result[b] = 'C';
+                }
+                
+                else if(temp == 13)
+                {
+                    result[b] = 'D';
+                }
+                
+                else if(temp == 14)
+                {
+                    result[b] = 'E';
+                }
+                
+                else if(temp == 15)
+                {
+                    result[b] = 'F';
+                }
+            }
+                
+            /*for(int a = 0; a < numinputs; a++)
+            {*/
+                if(((int)ceil(log10(currentvalue0)/log10(16))) > 13)
+                {
+                    result[(int)ceil(log10(currentvalue0)/log10(16))] = '\0';
+                }
+                else
+                {
+                    result[13] = '\0';
+                }
+                sleep_ms(5);
+                lcd_string(result);
+            //}
+        }
+    }
+
+    else
+    {
+        for(int t = 0; t < currentvalue1; t++)
+        {
+            LED_FUNC(2000, 500);
+        }
+        if(numtype == 0)
+        {
+            itoa(currentvalue1, result1, 10);
+            /*for(int a = 0; a < numinputs; a++)
+            {*/
+
+                
+                lcd_string(result1);
+                sleep_ms(1000);
+                lcd_string(result);
+
+            //}
+        }
+        
+        else if(numtype == 1)
+        {
+            itoa(currentvalue1, result1, 2);
+            /*for(int a = 0; a < numinputs; a++)
+            {*/
+                if(((int)ceil(log10(currentvalue1)/log10(2))) > 13)
+                {
+                    result1[(int)ceil(log10(currentvalue1)/log10(2))] = '\0';
+                }
+                else
+                {
+                    result1[13] = '\0';
+                }
+                lcd_string(result1);
+                sleep_ms(5);
+            //}
+        }	
+        
+        else if(numtype == 2)
+        {
+            for(int b = numinputs-1; b > 0; b++)
+            {
+                temp = currentvalue1 / (16 ^ b);
+                if(temp == 10)
+                {
+                    result1[b] = 'A';
+                }
+                
+                else if(temp == 11)
+                {
+                    result1[b] = 'B';
+                }
+                
+                else if(temp == 12)
+                {
+                    result1[b] = 'C';
+                }
+                
+                else if(temp == 13)
+                {
+                    result1[b] = 'D';
+                }
+                
+                else if(temp == 14)
+                {
+                    result1[b] = 'E';
+                }
+                
+                else if(temp == 15)
+                {
+                    result1[b] = 'F';
+                }
+            }
+                
+            /*for(int a = 0; a < numinputs; a++)
+            {*/
+                if(((int)ceil(log10(currentvalue1)/log10(16))) > 13)
+                {
+                    result1[(int)ceil(log10(currentvalue1/log10(16)))] = '\0';
+                }
+                else
+                {
+                    result1[13] = '\0';
+                }
+                sleep_ms(5);
+                lcd_string(result1);
+            //}
+        }
+    }
+	
 	
 }
 		
 
-void writevalue(char input)
+void writevalue(char input[2])
 {
+    //lcd_string(input);
+    //sleep_ms(1000);
 	if(valuenumber == 0)
 	{
 		// if decimal mode and a decimal number
-		if(numtype == 0 && input >= 47 && input <= 57)
+		if(numtype == 0 && input[0] >= 47 && input[0] <= 57)
 		{
 			currentvalue0 += atoi(input) * (10 ^ numinputs);
-			value0[numinputs] = input;
+			value0[numinputs] = input[0];
 			numinputs++;
 		}
 		
 		// if binary and binary number
-		else if(numtype == 1 && input != '0' && input != '1')
+		else if(numtype == 1 && input[0] != '0' && input[0] != '1')
 		{
 			currentvalue0 += atoi(input) * (2 ^ numinputs);
-			value0[numinputs] = input;
+			value0[numinputs] = input[0];
 			numinputs++;
 		}
 		
 		// if hex and hex number
-		else if(numtype == 0 && ((input >= 47 && input <= 57) || (input >= 65 && input <= 70 )))
+		else if(numtype == 2 && ((input[0] >= 47 && input[0] <= 57) || (input[0] >= 65 && input[0] <= 70 )))
 		{
-			if(input == 'A')
+			if(input[0] == 'A')
 			{
 				currentvalue0 = 10 * (16 ^ numinputs);
 			}
-			else if(input == 'B')
+			else if(input[0] == 'B')
 			{
 				currentvalue0 = 11 * (16 ^ numinputs);
 			}
-			else if(input == 'C')
+			else if(input[0] == 'C')
 			{
 				currentvalue0 = 12 * (16 ^ numinputs);
 			}
-			else if(input == 'D')
+			else if(input[0] == 'D')
 			{
 				currentvalue0 = 13 * (16 ^ numinputs);
 			}
-			else if(input == 'E')
+			else if(input[0] == 'E')
 			{
 				currentvalue0 = 14 * (16 ^ numinputs);
 			}
-			else if(input == 'F')
+			else if(input[0] == 'F')
 			{
 				currentvalue0 = 15 * (16 ^ numinputs);
 			}
-			value0[numinputs] = input;
+			value0[numinputs] = input[0];
 			numinputs++;
 			
 		}
-		
+		value0[numinputs] = '\0';
 
 	}
-	else if(valuenumber == 1)
+	else
 	{
+        
 		// if decimal mode and a decimal number
-		if(numtype == 0 && input >= 47 && input <= 57)
+        char var[20];
+		if(numtype == 0 && input[0] >= 47 && input[0] <= 57)
 		{
-			currentvalue1 += atoi(input) * (10 ^ numinputs);
-			value1[numinputs] = input;
+			currentvalue1 += atoi(input) * (10 ^ (numinputs-1));
+			value1[(numinputs-1)] = input[0];
 			numinputs++;
+            itoa(numinputs, var, 10);
+            lcd_string(var);
+            sleep_ms(2000);
+            //lcd_string(input);
+            //sleep_ms(2000);
+            //lcd_string(msg);
+            //sleep_ms(2000);
 		}
 		
 		// if binary and binary number
-		else if(numtype == 1 && input != '0' && input != '1')
+		else if(numtype == 1 && input[0] != '0' && input[0] != '1')
 		{
-			currentvalue1 += atoi(input) * (2 ^ numinputs);
-			value1[numinputs] = input;
+			currentvalue1 += atoi(input) * (2 ^ (numinputs-1));
+			value1[(numinputs-1)] = input[0];
 			numinputs++;
 		}
 		
 		// if hex and hex number
-		else if(numtype == 0 && ((input >= 47 && input <= 57) || (input >= 65 && input <= 70 )))
+		else if(numtype == 2 && ((input[0] >= 47 && input[0] <= 57) || (input[0] >= 65 && input[0] <= 70 )))
 		{
-			if(input == 'A')
+			if(input[0] == 'A')
 			{
-				currentvalue1 = 10 * (16 ^ numinputs);
+				currentvalue1 = 10 * (16 ^ (numinputs-1));
 			}
-			else if(input == 'B')
+			else if(input[0] == 'B')
 			{
-				currentvalue1 = 11 * (16 ^ numinputs);
+				currentvalue1 = 11 * (16 ^ (numinputs-1));
 			}
-			else if(input == 'C')
+			else if(input[0] == 'C')
 			{
-				currentvalue1 = 12 * (16 ^ numinputs);
+				currentvalue1 = 12 * (16 ^ (numinputs-1));
 			}
-			else if(input == 'D')
+			else if(input[0] == 'D')
 			{
-				currentvalue1 = 13 * (16 ^ numinputs);
+				currentvalue1 = 13 * (16 ^ (numinputs-1));
 			}
-			else if(input == 'E')
+			else if(input[0] == 'E')
 			{
-				currentvalue1 = 14 * (16 ^ numinputs);
+				currentvalue1 = 14 * (16 ^ (numinputs-1));
 			}
-			else if(input == 'F')
+			else if(input[0] == 'F')
 			{
-				currentvalue1 = 15 * (16 ^ numinputs);
+				currentvalue1 = 15 * (16 ^ (numinputs-1));
 			}
-			value1[numinputs] = input;
+			value1[(numinputs-1)] = input[0];
 			numinputs++;
 			
 		}
+
+        value1[(numinputs-1)] = '\0';
 		
 		
 	}
 	writetoLCD();
+
 	
 	return;
 }
@@ -450,11 +669,18 @@ int main() {
     #warning i2c/lcd_1602_i2c example requires a board with I2C pins
 #else
 
-    char msg[] = "pico";
+    msg[0]='P';
+    msg[1]='1';
+    msg[2]='\0';
+
+
+
+    char msg2[10];
+    msg2[0] = '6';
     const uint LED_PIN = 25;
     gpio_init(LED_PIN);
     gpio_set_dir(LED_PIN, GPIO_OUT);
-    LED_FUNC(2000,400);
+    LED_FUNC(1000,100);
     // This example will use I2C0 on the default SDA and SCL pins (4, 5 on a Pico)
 	gpio_init(row1);
 	gpio_init(row2);
@@ -467,8 +693,58 @@ int main() {
 	gpio_init(col3);
 	gpio_init(col4);
 	gpio_init(col5);
+
+    gpio_put(row2, true);
+	gpio_put(row3, true);
+	gpio_put(row4, true);
+	gpio_put(row5, true);
 	
-	gpio_put(row1, true);
+	gpio_set_dir(row1, true);
+	gpio_set_dir(row2, true);
+	gpio_set_dir(row3, true);
+	gpio_set_dir(row4, true);
+	gpio_set_dir(row5, true);
+	
+	gpio_set_dir(col1, false);
+	gpio_set_dir(col2, false);
+	gpio_set_dir(col3, false);
+	gpio_set_dir(col4, false);
+	gpio_set_dir(col5, false);
+	
+	
+	gpio_put(col1, false);
+	gpio_put(col2, false);
+	gpio_put(col3, false);
+	gpio_put(col4, false);
+	gpio_put(col5, false);
+	
+	
+
+    // This example will use I2C0 on the default SDA and SCL pins (4, 5 on a Pico)
+    i2c_init(i2c_default, 100 * 1000);
+    gpio_set_function(PICO_DEFAULT_I2C_SDA_PIN, GPIO_FUNC_I2C);
+    gpio_set_function(PICO_DEFAULT_I2C_SCL_PIN, GPIO_FUNC_I2C);
+    gpio_pull_up(PICO_DEFAULT_I2C_SDA_PIN);
+    gpio_pull_up(PICO_DEFAULT_I2C_SCL_PIN);
+    // Make the I2C pins available to picotool
+    bi_decl(bi_2pins_with_func(PICO_DEFAULT_I2C_SDA_PIN, PICO_DEFAULT_I2C_SCL_PIN, GPIO_FUNC_I2C));
+
+    lcd_init(); //made it to here
+    LED_FUNC(1000,100);
+    static char *message[] =
+            {
+                    "RP2040 by", "Raspberry Pi",
+                    "A brand new", "microcontroller",
+                    "Twin core M0", "Full C SDK",
+                    "More power in", "your product",
+                    "More beans", "than Heinz! Lets add some shit"
+            };
+
+    lcd_string(msg);
+
+    while (1) {
+ 
+        gpio_put(row1, true);
 	gpio_put(row2, true);
 	gpio_put(row3, true);
 	gpio_put(row4, true);
@@ -493,40 +769,21 @@ int main() {
 	gpio_put(col4, false);
 	gpio_put(col5, false);
 
-    // This example will use I2C0 on the default SDA and SCL pins (4, 5 on a Pico)
-    i2c_init(i2c_default, 100 * 1000);
-    gpio_set_function(PICO_DEFAULT_I2C_SDA_PIN, GPIO_FUNC_I2C);
-    gpio_set_function(PICO_DEFAULT_I2C_SCL_PIN, GPIO_FUNC_I2C);
-    gpio_pull_up(PICO_DEFAULT_I2C_SDA_PIN);
-    gpio_pull_up(PICO_DEFAULT_I2C_SCL_PIN);
-    // Make the I2C pins available to picotool
-    bi_decl(bi_2pins_with_func(PICO_DEFAULT_I2C_SDA_PIN, PICO_DEFAULT_I2C_SCL_PIN, GPIO_FUNC_I2C));
-
-    lcd_init(); //made it to here
-    LED_FUNC(1000,400);
-    static char *message[] =
-            {
-                    "RP2040 by", "Raspberry Pi",
-                    "A brand new", "microcontroller",
-                    "Twin core M0", "Full C SDK",
-                    "More power in", "your product",
-                    "More beans", "than Heinz! Lets add some shit"
-            };
-
-    while (1) {
-        /*while(gpio_get(col1) != 0 || gpio_get(col2) != 0 || gpio_get(col3) != 0 || gpio_get(col4) != 0 || gpio_get(col5) != 0)
+           while(gpio_get(col1) != 0 || gpio_get(col2) != 0 || gpio_get(col3) != 0 || gpio_get(col4) != 0 || gpio_get(col5) != 0)
 		{
 			sleep_ms(5);
-            //LED_FUNC(200,200);
+            LED_FUNC(200,200);
 		}
-        */
 
         //mew code
+        /*
         sleep_ms(5);
 		lcd_set_cursor(0,0);
 		sleep_ms(5);
 		lcd_send_byte(0b0000001100,LCD_COMMAND);
-		sleep_ms(5);
+		sleep_ms(5); */
+
+        //haveinput = 0;
 		
   		while(haveinput == 0)
   		{
@@ -534,10 +791,16 @@ int main() {
     			{
 	      //change ROWS and COLUMNS 
 				switchIO();
+                sleep_us(10);
 			      //Serial.print(digitalRead(col1));
 			     
 			      if(gpio_get(row1) != 0)
 			      {
+                    operation = '+';
+				      valuenumber = 1;
+                      numinputs = 0;
+                      lcd_clear();
+                      sleep_us(10);
                     
                    // LED_FUNC(100,100);
 			       //Serial.print("row 1");
@@ -555,7 +818,8 @@ int main() {
 			      else if(gpio_get(row2) != 0)
 			      {
 				//Serial.print("row 2");
-				writevalue('7');
+				    writevalue("7");
+                    sleep_us(10);
 			//        Wire.beginTransmission(LCD_address);
 			//        Wire.write(0b1000110001);
 			//        Wire.endTransmission();
@@ -564,7 +828,8 @@ int main() {
 				else if(gpio_get(row3) != 0)
 			      {
 				//Serial.print("row 2");
-				writevalue('4');
+				    writevalue("4");
+                    sleep_us(10);
 			//        Wire.beginTransmission(LCD_address);
 			//        Wire.write(0b1000110001);
 			//        Wire.endTransmission();
@@ -572,7 +837,8 @@ int main() {
 				else if(gpio_get(row4) != 0)
 			      {
 				//Serial.print("row 2");
-				writevalue('1');
+				    writevalue("1");
+                    sleep_us(10);
 			//        Wire.beginTransmission(LCD_address);
 			//        Wire.write(0b1000110001);
 			//        Wire.endTransmission();
@@ -581,7 +847,8 @@ int main() {
 			      {
 				//Serial.print("row 2");
 				
-				writevalue('0');
+				    writevalue("0");
+                    sleep_us(10);
 			//        Wire.beginTransmission(LCD_address);
 			//        Wire.write(0b1000110001);
 			//        Wire.endTransmission();
@@ -608,7 +875,8 @@ int main() {
 			      else if(gpio_get(row2) != 0)
 			      {
 				//Serial.print("row 2");
-				writevalue('8');
+				    writevalue("8");
+                    sleep_us(10);
 			//        Wire.beginTransmission(LCD_address);
 			//        Wire.write(0b1000110011);
 			//        Wire.endTransmission();
@@ -616,7 +884,8 @@ int main() {
 				else if(gpio_get(row3) != 0)
 			      {
 				//Serial.print("row 2");
-				writevalue('5');
+				    writevalue("5");
+                    sleep_us(10);
 			//        Wire.beginTransmission(LCD_address);
 			//        Wire.write(0b1000110001);
 			//        Wire.endTransmission();
@@ -624,7 +893,14 @@ int main() {
 				else if(gpio_get(row4) != 0)
 			      {
 				//Serial.print("row 2");
-				writevalue('2');
+				   // writevalue('2');
+                   operation = '+';
+				      valuenumber = 1;
+                      numinputs = 0;
+                      sleep_us(10);
+                      lcd_clear();
+                      numinputs = 0;
+                    
 			//        Wire.beginTransmission(LCD_address);
 			//        Wire.write(0b1000110001);
 			//        Wire.endTransmission();
@@ -648,7 +924,7 @@ int main() {
 			      //change ROWS and COLUMNS 
 			      switchIO();
 			      //Serial.print("Column 2\n");
-			      sleep_ms(5);
+			      //sleep_ms(5);
 			      if(gpio_get(row1) != 0)
 			      {
 				//Serial.print("row 1");
@@ -660,7 +936,8 @@ int main() {
 			      else if(gpio_get(row2) != 0)
 			      {
 				//Serial.print("row 2");
-				writevalue('9');
+				    writevalue("9");
+                    sleep_us(10);
 			//        Wire.beginTransmission(LCD_address);
 			//        Wire.write(0b1000110011);
 			//        Wire.endTransmission();
@@ -668,7 +945,8 @@ int main() {
 				else if(gpio_get(row3) != 0)
 			      {
 				//Serial.print("row 2");
-				writevalue('6');
+				    writevalue("6");
+                    sleep_us(10);
 			//        Wire.beginTransmission(LCD_address);
 			//        Wire.write(0b1000110001);
 			//        Wire.endTransmission();
@@ -676,16 +954,22 @@ int main() {
 				else if(gpio_get(row4) != 0)
 			      {
 				//Serial.print("row 2");
-				writevalue('3');
+				    writevalue("3");
+                    sleep_us(10);
 			//        Wire.beginTransmission(LCD_address);
 			//        Wire.write(0b1000110001);
 			//        Wire.endTransmission();
+                    lcd_string(msg2);
+                    sleep_ms(5);
 			      }
 				else if(gpio_get(row5) != 0)
 			      {
-                    sleep_ms(5);
-                    LED_FUNC(2000,2400);
-                    lcd_string(msg);
+                    //sleep_ms(5);
+                    //LED_FUNC(1000,100);
+                   // lcd_string(msg);
+                    //sleep_ms(5);
+                    //sleep_ms(2000);
+                    //lcd_string(msg2);
 				//Serial.print("row 2");
 				//writevalue(/*fill this with something */);
 			//        Wire.beginTransmission(LCD_address);
@@ -709,7 +993,10 @@ int main() {
 				//Serial.print("row 1");
 				//writevalue(/*fill this with something */);
 				      lcd_clear();
+                      sleep_ms(1);
+                      //LED_FUNC(4000, 200);
 				      valuenumber = 0;
+                      numinputs = 0;
 				      currentvalue0 = 0;
 				      currentvalue1 = 0;
 			//        Wire.beginTransmission(LCD_address);
@@ -722,6 +1009,10 @@ int main() {
 				//writevalue(/*fill this with something */);
 				      operation = '+';
 				      valuenumber = 1;
+                      numinputs = 0;
+                      lcd_clear();
+                      sleep_us(10);
+                      //result1 = 0;
 			//        Wire.beginTransmission(LCD_address);
 			//        Wire.write(0b1000110011);
 			//        Wire.endTransmission();
@@ -732,6 +1023,9 @@ int main() {
 				//writevalue(/*fill this with something */);
 					operation = '*';
 					valuenumber = 1;
+                    numinputs = 0;
+                    lcd_clear();
+                    sleep_us(10);
 			//        Wire.beginTransmission(LCD_address);
 			//        Wire.write(0b1000110001);
 			//        Wire.endTransmission();
@@ -769,9 +1063,11 @@ int main() {
 			      if(gpio_get(row1) != 0)
 			      {
 				//Serial.print("row 1");
+                    lcd_clear();
+                    sleep_us(10);
 				      
 				//turn on/off LCD
-				      if(lcdstate == 0)
+				      /*if(lcdstate == 0)
 				      {
 				      		lcd_send_byte(0b0000001000, LCD_COMMAND);
 				      }
@@ -779,7 +1075,7 @@ int main() {
 				      if(lcdstate == 1)
 				      {
 					      lcd_send_byte(0b0000001100, LCD_COMMAND);
-					}
+					}*/
 				    	
 			//        Wire.beginTransmission(LCD_address);
 			//        Wire.write(0b1000110010);
@@ -791,6 +1087,9 @@ int main() {
 				//writevalue(/*fill this with something */);
 				      operation = '-';
 				      valuenumber = 1;
+                      numinputs = 0;
+                      lcd_clear();
+                      sleep_us(10);
 			//        Wire.beginTransmission(LCD_address);
 			//        Wire.write(0b1000110011);
 			//        Wire.endTransmission();
@@ -801,6 +1100,9 @@ int main() {
 				//writevalue(/*fill this with something */);
 					operation = '/';
 					valuenumber = 1;
+                    numinputs = 0;
+                    lcd_clear();
+                    sleep_us(10);
 			//        Wire.beginTransmission(LCD_address);
 			//        Wire.write(0b1000110001);
 			//        Wire.endTransmission();
@@ -816,10 +1118,12 @@ int main() {
 				else if(gpio_get(row5) != 0)
 			      {
 				//Serial.print("row 2");
-				domath();
-				valuenumber = 0;
+				    domath();
+                    numinputs = 0;
+				    valuenumber = 0;
 					currentvalue0 = 0;
 					currentvalue1 = 0;
+                    sleep_us(10);
 			//        Wire.beginTransmission(LCD_address);
 			//        Wire.write(0b1000110001);
 			//        Wire.endTransmission();
@@ -831,7 +1135,7 @@ int main() {
 			    sleep_ms(10);
 
 		}
-	
+        haveinput = 0;
 
 
 
