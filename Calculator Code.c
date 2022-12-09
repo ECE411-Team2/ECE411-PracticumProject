@@ -252,29 +252,29 @@ void writetoLCD()
 {
 	if(numtype == 0)
 	{
-		result = itoa(resultvalue);
+		itoa(resultvalue, result, 10);
 		for(int a = 0; a < numinputs; a++)
 		{
 
-			lcd_send_byte(result[a], LCDSHIFTINCREMENT);
+			lcd_send_byte(result[a], LCD_ENTRYSHIFTINCREMENT);
 
 		}
 	}
 	
 	else if(numtype == 1)
 	{
-		result = itoa(resultvalue);
+		itoa(resultvalue, result, 2);
 		for(int a = 0; a < numinputs; a++)
 		{
-			lcd_send_byte(result[a], LCDSHIFTINCREMENT);
+			lcd_send_byte(result[a], LCD_ENTRYSHIFTINCREMENT);
 		}
 	}	
 	
 	else if(numtype == 2)
 	{
-		for(int b = num_inputs; b < 0; b++)
+		for(int b = numinputs; b < 0; b++)
 		{
-			temp = resultvalue / (16 ^ b)
+			temp = resultvalue / (16 ^ b);
 			if(temp == 10)
 			{
 				result[b] = 'A';
@@ -308,7 +308,7 @@ void writetoLCD()
 			
 		for(int a = 0; a < numinputs; a++)
 		{
-			lcd_send_byte(result[a], LCDSHIFTINCREMENT);
+			lcd_send_byte(result[a], LCD_ENTRYSHIFTINCREMENT);
 		}
 	}
 	
@@ -326,7 +326,7 @@ void writevalue(char input)
 		// if decimal mode and a decimal number
 		if(numtype == 0 && input >= 47 && input <= 57)
 		{
-			currentvalue0 += atoi(*input) * (10 ^ numinputs);
+			currentvalue0 += atoi(input) * (10 ^ numinputs);
 			value0[numinputs] = input;
 			numinputs++;
 		}
@@ -334,13 +334,13 @@ void writevalue(char input)
 		// if binary and binary number
 		else if(numtype == 1 && input != '0' && input != '1')
 		{
-			currentvalue0 += atoi(*input) * (2 ^ numinputs);
+			currentvalue0 += atoi(input) * (2 ^ numinputs);
 			value0[numinputs] = input;
-			num_inputs++;
+			numinputs++;
 		}
 		
 		// if hex and hex number
-		else if(numtype == 0 && ((input >= 47 && input <= 57) || (input >= 65 && input <= 70 )
+		else if(numtype == 0 && ((input >= 47 && input <= 57) || (input >= 65 && input <= 70 )))
 		{
 			if(input == 'A')
 			{
@@ -378,7 +378,7 @@ void writevalue(char input)
 		// if decimal mode and a decimal number
 		if(numtype == 0 && input >= 47 && input <= 57)
 		{
-			currentvalue1 += atoi(*input) * (10 ^ numinputs);
+			currentvalue1 += atoi(input) * (10 ^ numinputs);
 			value1[numinputs] = input;
 			numinputs++;
 		}
@@ -386,13 +386,13 @@ void writevalue(char input)
 		// if binary and binary number
 		else if(numtype == 1 && input != '0' && input != '1')
 		{
-			currentvalue1 += atoi(*input) * (2 ^ numinputs);
+			currentvalue1 += atoi(input) * (2 ^ numinputs);
 			value1[numinputs] = input;
 			numinputs++;
 		}
 		
 		// if hex and hex number
-		else if(numtype == 0 && ((input >= 47 && input <= 57) || (input >= 65 && input <= 70 )
+		else if(numtype == 0 && ((input >= 47 && input <= 57) || (input >= 65 && input <= 70 )))
 		{
 			if(input == 'A')
 			{
