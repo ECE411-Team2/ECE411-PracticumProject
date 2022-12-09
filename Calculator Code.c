@@ -257,6 +257,7 @@ void writetoLCD()
 		{
 
 			lcd_send_byte(result[a], LCD_ENTRYSHIFTINCREMENT);
+			sleep_ms(5);
 
 		}
 	}
@@ -267,6 +268,7 @@ void writetoLCD()
 		for(int a = 0; a < numinputs; a++)
 		{
 			lcd_send_byte(result[a], LCD_ENTRYSHIFTINCREMENT);
+			sleep_ms(5);
 		}
 	}	
 	
@@ -308,6 +310,7 @@ void writetoLCD()
 			
 		for(int a = 0; a < numinputs; a++)
 		{
+			sleep_ms(5);
 			lcd_send_byte(result[a], LCD_ENTRYSHIFTINCREMENT);
 		}
 	}
@@ -495,6 +498,7 @@ int main() {
 	haveinput = 0;
 	while(1)
 	{
+		lcd_set_cursor(0,0);
 		while(gpio_get(col1) == 1 || gpio_get(col2) == 1 || gpio_get(col3) == 1 || gpio_get(col4) == 1 || gpio_get(col5) == 1)
 		{
 			sleep_ms(5);
@@ -507,7 +511,7 @@ int main() {
 	      //change ROWS and COLUMNS 
 				switchIO();
 			      //Serial.print(digitalRead(col1));
-			      sleep_ms(50);
+			      sleep_ms(5);
 			      if(gpio_get(row1) != 0)
 			      {
 			       //Serial.print("row 1");
@@ -566,7 +570,7 @@ int main() {
 			      //change ROWS and COLUMNS 
 			      switchIO();
 			      //Serial.print("Column 2\n");
-			      sleep_ms(50);
+			      sleep_ms(5);
 			      if(gpio_get(row1) != 0)
 			      {
 				//Serial.print("row 1");
@@ -618,7 +622,7 @@ int main() {
 			      //change ROWS and COLUMNS 
 			      switchIO();
 			      //Serial.print("Column 2\n");
-			      sleep_ms(50);
+			      sleep_ms(5);
 			      if(gpio_get(row1) != 0)
 			      {
 				//Serial.print("row 1");
@@ -670,7 +674,7 @@ int main() {
 			      //change ROWS and COLUMNS 
 			      switchIO();
 			      //Serial.print("Column 2\n");
-			      sleep_ms(50);
+			      sleep_ms(5);
 			      if(gpio_get(row1) != 0)
 			      {
 				//Serial.print("row 1");
@@ -732,7 +736,7 @@ int main() {
 			      //change ROWS and COLUMNS 
 			      switchIO();
 			      //Serial.print("Column 2\n");
-			      sleep_ms(50);
+			      sleep_ms(5);
 			      if(gpio_get(row1) != 0)
 			      {
 				//Serial.print("row 1");
